@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: url('https://static.vecteezy.com/system/resources/previews/007/169/470/non_2x/abstract-dark-background-with-blue-neon-glowing-vector.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: auto;
+            flex-direction: column;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 300px;
+            width: 100%;
+            animation: enlargeShrink 5s infinite;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+
+        @keyframes enlargeShrink {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            color: #00f;
+            font-size: 2rem;
+            line-height: 1.2;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-input {
+            margin-bottom: 1rem;
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: #00f;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .file-input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px dashed #00f;
+            border-radius: 50%;
+            box-sizing: border-box;
+            animation: rotateBorder 5s infinite linear; /* Slower rotation speed */
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .file-input input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input .filename {
+            font-size: 0.6rem;
+            color: #00f;
+            margin-bottom: 0.5rem;
+            position: absolute;
+            top: -1.5rem;
+            width: 100%;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .password-input {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+            width: 150px;
+        }
+
+        input[type="password"] {
+            padding: 0.3rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            padding-right: 30px;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 5px;
+            cursor: pointer;
+            width: 25px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #00f;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        button:hover {
+            background-color: #005;
+        }
+
+        .upload-message {
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .upload-message:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.02);
+        }
+
+        .upload-message a {
+            color: #00f;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .upload-message a:hover {
+            color: #005;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Share Your File</h1>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="file-input">
+                <div class="filename" id="filename">No file chosen</div>
+                <span>start</span>
+                <input type="file" id="file" name="file" required onchange="updateFilename()">
+            </div>
+            <div class="password-input">
+                <input type="password" id="password" name="password" placeholder="Enter password">
+                <span class="eye-icon" onclick="togglePassword()">👁️</span>
+            </div>
+            <button type="submit">share</button>
+        </form>
+    </div>
+
+    <% if (locals.fileLink != null) { %>
+        <div class="upload-message">
+            Your file is uploaded<br>
+            <a href="<%= locals.fileLink %>"><%= locals.fileLink %></a>
+        </div>
+    <% } %>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = '👁️';
+            }
+        }
+
+        function updateFilename() {
+            const fileInput = document.getElementById('file');
+            const filenameDisplay = document.getElementById('filename');
+            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name.toLowerCase() : 'No file chosen';
+            filenameDisplay.textContent = fileName;
+        }
+    </script>
+</body>
+</html>
